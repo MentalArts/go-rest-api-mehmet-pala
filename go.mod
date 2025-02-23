@@ -6,6 +6,7 @@ toolchain go1.23.6
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/swag v1.16.4
 	gorm.io/gorm v1.25.10
 )

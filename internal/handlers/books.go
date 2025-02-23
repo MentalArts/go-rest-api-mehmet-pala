@@ -15,7 +15,7 @@ import (
 // @Produce json
 // @Param page query int false "Page number"
 // @Param limit query int false "Items per page"
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {array} models.Book
 // @Router /api/v1/books [get]
 func GetBooks(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -69,6 +69,14 @@ func CreateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Validate AuthorID before inserting
+	var author models.Author
+	if err := db.DB.First(&author, book.AuthorID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Author ID"})
+		return
+	}
+
 	result := db.DB.Create(&book)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -93,11 +101,19 @@ func UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
-	if err := c.ShouldBindJSON(&book); err != nil {
+
+	var updatedBook models.Book
+	if err := c.ShouldBindJSON(&updatedBook); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.DB.Save(&book)
+
+	result := db.DB.Model(&book).Where("id = ?", id).Updates(updatedBook)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": book})
 }
 
@@ -106,7 +122,7 @@ func UpdateBook(c *gin.Context) {
 // @Tags books
 // @Produce json
 // @Param id path int true "Book ID"
-// @Success 200 {object} map[string]string
+// @Success 200 {object} map[string]interface{}
 // @Router /api/v1/books/{id} [delete]
 func DeleteBook(c *gin.Context) {
 	id := c.Param("id")
@@ -115,6 +131,7 @@ func DeleteBook(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
+
 	db.DB.Delete(&book)
-	c.JSON(http.StatusOK, gin.H{"data": "Book deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "Book deleted", "book": book})
 }

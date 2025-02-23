@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/db"
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // GetAuthors godoc
@@ -47,9 +49,12 @@ func GetAuthors(c *gin.Context) {
 func GetAuthorByID(c *gin.Context) {
 	id := c.Param("id")
 	var author models.Author
-	result := db.DB.First(&author, id)
-	if result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Author not found"})
+	if err := db.DB.First(&author, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Author not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": author})

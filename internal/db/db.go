@@ -23,6 +23,10 @@ func InitDB() {
 	dbname := os.Getenv("DB_NAME")
 	port := os.Getenv("DB_PORT")
 
+	if host == "" || user == "" || password == "" || dbname == "" || port == "" {
+		log.Fatal("Database connection environment variables are not set correctly.")
+	}
+
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		host, user, password, dbname, port)
 
@@ -39,9 +43,11 @@ func InitDB() {
 		log.Fatal("Failed to connect to database after retries:", err)
 	}
 
-	DB.AutoMigrate(&models.Author{}, &models.Book{}, &models.Review{})
+	err = DB.AutoMigrate(&models.Author{}, &models.Book{}, &models.Review{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 
-	// Add foreign key constraints
 	addForeignKey("books", "author_id", "authors(id)", "CASCADE")
 	addForeignKey("reviews", "book_id", "books(id)", "CASCADE")
 }
