@@ -16,10 +16,11 @@ type Book struct {
 	ID              uint     `gorm:"primaryKey" json:"id"`
 	Title           string   `json:"title" binding:"required"`
 	AuthorID        uint     `json:"author_id" binding:"required"`
+	Author          Author   `json:"author" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	ISBN            string   `json:"isbn" binding:"required"`
 	PublicationYear int      `json:"publication_year" binding:"required"`
 	Description     string   `json:"description"`
-	Reviews         []Review `json:"reviews,omitempty"`
+	Reviews         []Review `json:"reviews,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type Review struct {
