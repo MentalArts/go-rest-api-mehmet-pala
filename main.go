@@ -17,7 +17,7 @@ import (
 // @version 1.0
 // @description REST API for managing a book library
 // @host localhost:8080
-// @BasePath /
+// @BasePath /api/v1
 
 // @securityDefinitions.basic BasicAuth
 // @externalDocs.description OpenAPI
@@ -33,6 +33,10 @@ func main() {
 	db.InitDB()
 
 	r := gin.Default()
+
+	// Set trusted proxies
+	// Replace with the IP addresses of your trusted proxies
+	r.SetTrustedProxies([]string{"127.0.0.1", "your_proxy_ip"}) // For local and your reverse proxy
 
 	// Serve Swagger documentation
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

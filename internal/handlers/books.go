@@ -16,7 +16,7 @@ import (
 // @Param page query int false "Page number"
 // @Param limit query int false "Items per page"
 // @Success 200 {array} models.Book
-// @Router /api/v1/books [get]
+// @Router /books [get]
 func GetBooks(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))

@@ -74,16 +74,13 @@ info:
   title: Book Library API
   version: "1.0"
 paths:
-  /api/v1/books:
+  /api/v1/books/{id}/reviews:
     get:
       parameters:
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
+      - description: Book ID
+        in: path
+        name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -92,11 +89,56 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Book'
+              $ref: '#/definitions/models.Review'
             type: array
-      summary: List all books
+      summary: List all reviews for a specific book
       tags:
-      - books
+      - reviews
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Review to create
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/models.Review'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Review'
+      summary: Create a new review for a book
+      tags:
+      - reviews
+  /api/v1/reviews/{id}:
+    delete:
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a review
+      tags:
+      - reviews
   /authors:
     get:
       parameters:
@@ -202,6 +244,28 @@ paths:
       tags:
       - authors
   /books:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Book'
+            type: array
+      summary: List all books
+      tags:
+      - books
     post:
       consumes:
       - application/json
@@ -283,71 +347,6 @@ paths:
       summary: Update an existing book
       tags:
       - books
-  /books/{id}/reviews:
-    get:
-      parameters:
-      - description: Book ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Review'
-            type: array
-      summary: List all reviews for a specific book
-      tags:
-      - reviews
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Book ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Review to create
-        in: body
-        name: review
-        required: true
-        schema:
-          $ref: '#/definitions/models.Review'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Review'
-      summary: Create a new review for a book
-      tags:
-      - reviews
-  /reviews/{id}:
-    delete:
-      parameters:
-      - description: Review ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete a review
-      tags:
-      - reviews
 securityDefinitions:
   BasicAuth:
     type: basic
