@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'app'
+    static_configs:
+      - targets: ['app:8080']
+    metrics_path: '/metrics'  # /metrics endpoint'ini belirtiyoruz
+    scheme: http             # Varsayılan olarak http, ancak https kullanıyorsanız belirtin
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'  # Redis Exporter ile /metrics endpoint'ini kullanıyoruz

@@ -9,6 +9,29 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server"]
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
 
   app:
     build: .
@@ -22,8 +45,72 @@ services:
       DB_PASSWORD: postgres
       DB_NAME: postgres
       DB_PORT: "5432"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     depends_on:
       - postgres
+      - redis
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./scripts:/scripts
+    networks:
+      - monitoring
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/metrics"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+    - "3000:3000"
+    environment:
+    - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+    - monitoring
+    depends_on:
+    - prometheus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 5s
+
+
+
+  # Optional: Load Testing Tool (e.g., k6)
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    volumes:
+      - ./scripts:/scripts
+    command: ["run", "/scripts/load_test.js"]
+    depends_on:
+      - app
+
+networks:
+  monitoring:
+    driver: bridge
 
 volumes:
   postgres_data:

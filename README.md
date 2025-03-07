@@ -1,86 +1,40 @@
 # go-rest-api-mehmet-pala
 
-This project is a Go-based REST API for managing a book library. It provides endpoints for managing authors, books, and reviews.
+This project is a Go-based REST API for managing a book library. It provides endpoints for managing authors, books, and reviews. It integrates Swagger for API documentation, supports Docker for containerization, and uses PostgreSQL and Redis for data storage.
 
 ## Features
 
-- RESTful API for managing authors, books, and reviews
-- Swagger documentation for API endpoints
-- Docker support for containerization
-- Environment variable configuration
-- Continuous Integration and Deployment with GitLab CI
+- **RESTful API** for managing authors, books, and reviews.
+- **Swagger Documentation**: Auto-generated API documentation.
+- **CRUD Operations**: Perform CRUD operations on books, authors, and reviews.
+- **Health Check Endpoint**: API includes a `/health` endpoint to check the status of the server.
+- **Prometheus Monitoring**: Includes Prometheus metrics at `/metrics`.
+- **Docker Support**: For containerization with PostgreSQL, Redis, Prometheus, Grafana, and the application.
+- **Environment Variable Configuration**: `.env` file for easy configuration.
+- **Continuous Integration and Deployment** with GitLab CI.
 
-## Project Structure
 
-```
-go-rest-api-mehmet-pala/
-├── .git/                   # Git repository files
-├── .gitlab-ci.yml          # GitLab CI configuration
-├── Dockerfile              # Dockerfile for building the application
-├── docker-compose.yaml     # Docker Compose configuration
-├── go.mod                  # Go module file
-├── go.sum                  # Go dependencies file
-├── main.go                 # Main application entry point
-├── internal/               # Internal packages
-│   ├── db/                 # Database initialization and connection
-│   └── routes/             # API route definitions
-├── .env                    # Environment variables file
-└── README.md               # Project README file
-```
+## Prerequisites
 
+- **Go**: Version 1.16 or higher.
+- **Docker**: For containerizing the application and running services like PostgreSQL, Redis, Prometheus, and Grafana.
+- **Swagger**: To auto-generate API documentation.
+- **PostgreSQL**: For the relational database.
+- **Redis**: For caching and session storage.
+- **GitLab CI**: For Continuous Integration and Deployment.
 
 ## Getting Started
 
-### Prerequisites
-
-- Go 1.16+
-- Docker
-- Docker Compose
-
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository**:
     ```sh
     git clone https://github.com/MentalArts/go-rest-api-mehmet-pala.git
     cd go-rest-api-mehmet-pala
     ```
 
-2. Copy the `.env.example` file to `.env` and update the environment variables as needed. The `.env.example` file contains placeholder values for the environment variables required by the application. You need to replace these placeholders with actual values.
+2. **Set up `.env` file**:
+   Copy the `.env.example` file to `.env` and update the environment variables as needed. The `.env.example` file contains placeholder values for the environment variables required by the application.
 
-    ```sh
-    cp .env.example .env
-    ```
-
-    Open the `.env` file in a text editor and update the values as needed. For example:
-
-    ```env
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_USER=your_db_user
-    DB_PASSWORD=your_db_password
-    DB_NAME=your_db_name
-    ```
-
-3. Build and run the Docker containers:
-
-    ```sh
-    docker-compose up --build
-    ```
-
-4. The API will be available at `http://localhost:8080`.
-
-### API Documentation
-
-Swagger documentation is available at `http://localhost:8080/swagger/index.html`.
-
-### Running Tests
-
-To run tests, use the following command:
-
-```sh
-go test ./...
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+   ```sh
+   cp .env.example .env

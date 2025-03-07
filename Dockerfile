@@ -15,10 +15,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
 FROM alpine:latest
 WORKDIR /app
-
 COPY --from=builder /app/main .
 COPY --from=builder /app/docs ./docs
+COPY --from=builder /app/.env /app/.env
 
 EXPOSE 8080
+
+RUN chmod +x /app/main
 
 CMD ["./main"]
