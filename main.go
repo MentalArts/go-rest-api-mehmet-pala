@@ -4,17 +4,24 @@ import (
 	"log"
 	"os"
 
+	_ "github.com/MentalArts/go-rest-api-mehmet-pala/docs" // Import your generated docs package
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/db"
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Book Library API
 // @version 1.0
 // @description REST API for managing a book library
 // @host localhost:8080
-// @BasePath /api/v1
+// @BasePath /
+
+// @securityDefinitions.basic BasicAuth
+// @externalDocs.description OpenAPI
+// @externalDocs.url https://swagger.io/resources/open-api/
 func main() {
 	// Load .env variables
 	err := godotenv.Load()
@@ -26,6 +33,9 @@ func main() {
 	db.InitDB()
 
 	r := gin.Default()
+
+	// Serve Swagger documentation
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Setup routes
 	routes.SetupRoutes(r)

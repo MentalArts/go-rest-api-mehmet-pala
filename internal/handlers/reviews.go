@@ -17,7 +17,7 @@ import (
 // @Produce json
 // @Param id path int true "Book ID"
 // @Success 200 {object} []models.Review
-// @Router /api/v1/books/{id}/reviews [get]
+// @Router /books/{id}/reviews [get]
 func GetReviewsForBook(c *gin.Context) {
 	bookID := c.Param("id")
 
@@ -49,7 +49,7 @@ func GetReviewsForBook(c *gin.Context) {
 // @Param id path int true "Book ID"
 // @Param review body models.Review true "Review to create"
 // @Success 201 {object} models.Review
-// @Router /api/v1/books/{id}/reviews [post]
+// @Router /books/{id}/reviews [post]
 func CreateReview(c *gin.Context) {
 	bookID := c.Param("id")
 	var review models.Review
@@ -122,7 +122,7 @@ func UpdateReview(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Review ID"
 // @Success 200 {object} map[string]string
-// @Router /api/v1/reviews/{id} [delete]
+// @Router /reviews/{id} [delete]
 func DeleteReview(c *gin.Context) {
 	id := c.Param("id")
 	var review models.Review

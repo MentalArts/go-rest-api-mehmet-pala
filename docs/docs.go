@@ -15,7 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/authors": {
+        "/api/v1/books": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "List all books",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Book"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/authors": {
             "get": {
                 "produces": [
                     "application/json"
@@ -80,7 +116,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/authors/{id}": {
+        "/authors/{id}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -175,39 +211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/books": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "books"
-                ],
-                "summary": "List all books",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Items per page",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
+        "/books": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -240,7 +244,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/books/{id}": {
+        "/books/{id}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -327,15 +331,13 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/api/v1/books/{id}/reviews": {
+        "/books/{id}/reviews": {
             "get": {
                 "produces": [
                     "application/json"
@@ -404,45 +406,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/reviews/{id}": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "reviews"
-                ],
-                "summary": "Update an existing review",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Review ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Review data",
-                        "name": "review",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Review"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Review"
-                        }
-                    }
-                }
-            },
+        "/reviews/{id}": {
             "delete": {
                 "produces": [
                     "application/json"
@@ -568,6 +532,15 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
     }
 }`
 

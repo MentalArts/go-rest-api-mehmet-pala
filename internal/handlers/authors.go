@@ -18,7 +18,7 @@ import (
 // @Param page query int false "Page number"
 // @Param limit query int false "Items per page"
 // @Success 200 {object} map[string]interface{}
-// @Router /api/v1/authors [get]
+// @Router /authors [get]
 func GetAuthors(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
@@ -45,7 +45,7 @@ func GetAuthors(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Author ID"
 // @Success 200 {object} models.Author
-// @Router /api/v1/authors/{id} [get]
+// @Router /authors/{id} [get]
 func GetAuthorByID(c *gin.Context) {
 	id := c.Param("id")
 	var author models.Author
@@ -67,7 +67,7 @@ func GetAuthorByID(c *gin.Context) {
 // @Produce json
 // @Param author body models.Author true "Author to create"
 // @Success 201 {object} models.Author
-// @Router /api/v1/authors [post]
+// @Router /authors [post]
 func CreateAuthor(c *gin.Context) {
 	var author models.Author
 	if err := c.ShouldBindJSON(&author); err != nil {
@@ -90,7 +90,7 @@ func CreateAuthor(c *gin.Context) {
 // @Param id path int true "Author ID"
 // @Param author body models.Author true "Author data"
 // @Success 200 {object} models.Author
-// @Router /api/v1/authors/{id} [put]
+// @Router /authors/{id} [put]
 func UpdateAuthor(c *gin.Context) {
 	id := c.Param("id")
 	var author models.Author
@@ -112,7 +112,7 @@ func UpdateAuthor(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Author ID"
 // @Success 200 {object} map[string]string
-// @Router /api/v1/authors/{id} [delete]
+// @Router /authors/{id} [delete]
 func DeleteAuthor(c *gin.Context) {
 	id := c.Param("id")
 	var author models.Author

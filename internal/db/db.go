@@ -53,15 +53,33 @@ func InitDB() {
 }
 
 func addForeignKey(table, field, ref, onDelete string) {
-	err := DB.Exec(fmt.Sprintf(`
-		ALTER TABLE %s 
-		ADD CONSTRAINT fk_%s_%s 
-		FOREIGN KEY (%s) 
-		REFERENCES %s 
-		ON DELETE %s`,
-		table, table, field, field, ref, onDelete)).Error
+	var count int64
+	err := DB.Raw(fmt.Sprintf(`
+        SELECT COUNT(*)
+        FROM information_schema.table_constraints
+        WHERE constraint_type = 'FOREIGN KEY'
+        AND table_name = '%s'
+        AND constraint_name = 'fk_%s_%s'`,
+		table, table, field)).Scan(&count).Error
 
 	if err != nil {
-		log.Printf("Warning: Could not add foreign key constraint to %s: %v", table, err)
+		log.Printf("Warning: Could not check foreign key constraint for %s: %v", table, err)
+		return
+	}
+
+	if count == 0 {
+		err = DB.Exec(fmt.Sprintf(`
+            ALTER TABLE %s 
+            ADD CONSTRAINT fk_%s_%s 
+            FOREIGN KEY (%s) 
+            REFERENCES %s 
+            ON DELETE %s`,
+			table, table, field, field, ref, onDelete)).Error
+
+		if err != nil {
+			log.Printf("Warning: Could not add foreign key constraint to %s: %v", table, err)
+		}
+	} else {
+		log.Printf("Foreign key constraint fk_%s_%s already exists on table %s", table, field, table)
 	}
 }

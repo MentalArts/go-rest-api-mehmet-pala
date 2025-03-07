@@ -64,6 +64,9 @@ definitions:
     - date_posted
     - rating
     type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
 host: localhost:8080
 info:
   contact: {}
@@ -71,7 +74,30 @@ info:
   title: Book Library API
   version: "1.0"
 paths:
-  /api/v1/authors:
+  /api/v1/books:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Book'
+            type: array
+      summary: List all books
+      tags:
+      - books
+  /authors:
     get:
       parameters:
       - description: Page number
@@ -113,7 +139,7 @@ paths:
       summary: Create a new author
       tags:
       - authors
-  /api/v1/authors/{id}:
+  /authors/{id}:
     delete:
       parameters:
       - description: Author ID
@@ -175,28 +201,7 @@ paths:
       summary: Update an existing author
       tags:
       - authors
-  /api/v1/books:
-    get:
-      parameters:
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-      summary: List all books
-      tags:
-      - books
+  /books:
     post:
       consumes:
       - application/json
@@ -217,7 +222,7 @@ paths:
       summary: Create a new book
       tags:
       - books
-  /api/v1/books/{id}:
+  /books/{id}:
     delete:
       parameters:
       - description: Book ID
@@ -231,8 +236,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
+            additionalProperties: true
             type: object
       summary: Delete a book
       tags:
@@ -279,7 +283,7 @@ paths:
       summary: Update an existing book
       tags:
       - books
-  /api/v1/books/{id}/reviews:
+  /books/{id}/reviews:
     get:
       parameters:
       - description: Book ID
@@ -324,7 +328,7 @@ paths:
       summary: Create a new review for a book
       tags:
       - reviews
-  /api/v1/reviews/{id}:
+  /reviews/{id}:
     delete:
       parameters:
       - description: Review ID
@@ -344,29 +348,7 @@ paths:
       summary: Delete a review
       tags:
       - reviews
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Review ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Review data
-        in: body
-        name: review
-        required: true
-        schema:
-          $ref: '#/definitions/models.Review'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Review'
-      summary: Update an existing review
-      tags:
-      - reviews
+securityDefinitions:
+  BasicAuth:
+    type: basic
 swagger: "2.0"

@@ -3,8 +3,6 @@ package routes
 import (
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/handlers"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes(r *gin.Engine) {
@@ -31,6 +29,4 @@ func SetupRoutes(r *gin.Engine) {
 		api.DELETE("/reviews/:id", handlers.DeleteReview)
 	}
 
-	// Swagger documentation endpoint
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

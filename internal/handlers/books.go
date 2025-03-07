@@ -43,7 +43,7 @@ func GetBooks(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Book ID"
 // @Success 200 {object} models.Book
-// @Router /api/v1/books/{id} [get]
+// @Router /books/{id} [get]
 func GetBookByID(c *gin.Context) {
 	id := c.Param("id")
 	var book models.Book
@@ -62,7 +62,7 @@ func GetBookByID(c *gin.Context) {
 // @Produce json
 // @Param book body models.Book true "Book to create"
 // @Success 201 {object} models.Book
-// @Router /api/v1/books [post]
+// @Router /books [post]
 func CreateBook(c *gin.Context) {
 	var book models.Book
 	if err := c.ShouldBindJSON(&book); err != nil {
@@ -93,7 +93,7 @@ func CreateBook(c *gin.Context) {
 // @Param id path int true "Book ID"
 // @Param book body models.Book true "Book data"
 // @Success 200 {object} models.Book
-// @Router /api/v1/books/{id} [put]
+// @Router /books/{id} [put]
 func UpdateBook(c *gin.Context) {
 	id := c.Param("id")
 	var book models.Book
@@ -123,7 +123,7 @@ func UpdateBook(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Book ID"
 // @Success 200 {object} map[string]interface{}
-// @Router /api/v1/books/{id} [delete]
+// @Router /books/{id} [delete]
 func DeleteBook(c *gin.Context) {
 	id := c.Param("id")
 	var book models.Book
