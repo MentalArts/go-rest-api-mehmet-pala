@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings" // Added for path checking
+	"strings"
 	"time"
 
-	_ "github.com/MentalArts/go-rest-api-mehmet-pala/docs" // Import your generated docs package
+	_ "github.com/MentalArts/go-rest-api-mehmet-pala/docs"
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/db"
 	"github.com/MentalArts/go-rest-api-mehmet-pala/internal/routes"
 	"github.com/gin-gonic/gin"
@@ -36,10 +36,12 @@ var rdb *redis.Client
 
 func initRedis() {
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "redis:6379", // Docker'daki Redis servisi
-		Password: "",           // Varsayılan şifre boş
-		DB:       0,            // Varsayılan veritabanı
+		Addr:     "redis:6379",
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
 	})
+	pong, err := rdb.Ping(context.Background()).Result()
+	log.Printf("Redis ping: %s, error: %v", pong, err)
 }
 
 // Rate limiting middleware

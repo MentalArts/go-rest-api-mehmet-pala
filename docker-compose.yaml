@@ -22,12 +22,12 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"
-    command: ["redis-server"]
+      - "6379:6379" # Bind to localhost on host
+    command: ["redis-server", "--requirepass", "password"]
     networks:
       - monitoring
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "ping"]
       interval: 10s
       retries: 3
       start_period: 30s
@@ -47,6 +47,7 @@ services:
       DB_PORT: "5432"
       REDIS_HOST: redis
       REDIS_PORT: "6379"
+      REDIS_PASSWORD: "password"
     depends_on:
       - postgres
       - redis
