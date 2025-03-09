@@ -36,7 +36,7 @@ var rdb *redis.Client
 
 func initRedis() {
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       0,
 	})
@@ -53,38 +53,38 @@ func rateLimitMiddleware(limit int, window time.Duration) gin.HandlerFunc {
 			return
 		}
 
-		ip := c.ClientIP() // Kullanıcının IP adresini al
+		ip := c.ClientIP() // Get client IP
 		ctx := context.Background()
-
-		// Redis'teki anahtar
 		key := fmt.Sprintf("rate_limit:%s", ip)
 
-		// Redis'ten mevcut istek sayısını al
-		count, err := rdb.Get(ctx, key).Int()
-		if err != nil && err != redis.Nil {
-			log.Printf("Error reading from Redis: %v", err)
+		// Increment count atomically and set expiration if new key
+		count, err := rdb.Incr(ctx, key).Result()
+		if err != nil {
+			log.Printf("Error incrementing Redis count: %v", err)
 			c.JSON(500, gin.H{"error": "Internal server error"})
 			c.Abort()
 			return
 		}
 
-		// Eğer istek sayısı limitin üzerinde ise 429 Too Many Requests döner
-		if count >= limit {
+		// If this is the first request, set expiration
+		if count == 1 {
+			_, err = rdb.Expire(ctx, key, window).Result()
+			if err != nil {
+				log.Printf("Error setting Redis expiration: %v", err)
+				c.JSON(500, gin.H{"error": "Internal server error"})
+				c.Abort()
+				return
+			}
+		}
+
+		// Check if limit exceeded
+		if count > int64(limit) {
 			c.JSON(429, gin.H{"error": "Rate limit exceeded"})
 			c.Abort()
 			return
 		}
 
-		// Eğer limit aşılmadıysa, isteği say
-		_, err = rdb.Set(ctx, key, count+1, window).Result()
-		if err != nil {
-			log.Printf("Error setting value in Redis: %v", err)
-			c.JSON(500, gin.H{"error": "Internal server error"})
-			c.Abort()
-			return
-		}
-
-		// İstek sayısını artırarak işlemi devam ettir
+		// Proceed with request
 		c.Next()
 	}
 }
